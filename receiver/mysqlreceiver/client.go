@@ -993,7 +993,8 @@ func (c *mySQLClient) getReplicaStatusStats(supportsReplicaStatus bool) ([]repli
 			case "replicate_ignore_domain_ids":
 				dest = append(dest, &s.replicateIgnoreDomainIDs)
 			default:
-				return nil, fmt.Errorf("unknown column name %s for replica status", col)
+				// Newer servers add columns, such as Connects_Tried in MariaDB 12; scan and drop them.
+				dest = append(dest, new(any))
 			}
 		}
 		err := rows.Scan(dest...)

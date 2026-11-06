@@ -429,6 +429,16 @@ func TestGetReplicaStatusStatsNormalizesColumnSpellings(t *testing.T) {
 			wantReplicaSQLRunning: "Yes",
 			wantChannelName:       "source_b",
 		},
+		{
+			name:                  "unknown columns are ignored",
+			supportsReplicaStatus: false,
+			query:                 "SHOW SLAVE STATUS",
+			columns:               []string{"Slave_IO_Running", "Connects_Tried", "Slave_SQL_Running", "Channel_Name"},
+			values:                []driver.Value{"Yes", int64(3), "Yes", ""},
+			wantReplicaIORunning:  "Yes",
+			wantReplicaSQLRunning: "Yes",
+			wantChannelName:       "",
+		},
 	}
 
 	for _, tt := range tests {
